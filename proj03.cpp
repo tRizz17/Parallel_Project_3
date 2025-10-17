@@ -8,7 +8,7 @@
 
 // setting the number of threads:
 #ifndef NUMT
-#define NUMT		    2
+#define NUMT		    1
 #endif
 
 // setting the number of capitals we want to try:
@@ -74,10 +74,10 @@ main( int argc, char *argv[ ] )
 #endif
 
 	// make sure we have the data correctly:
-	//for( int i = 0; i < NUMCITIES; i++ )
-	//{
-		//fprintf( stderr, "%3d  %8.2f  %8.2f  %s\n", i, Cities[i].longitude, Cities[i].latitude, Cities[i].name.c_str() );
-	//}
+	// for( int i = 0; i < NUMCITIES; i++ )
+	// {
+	// 	fprintf( stderr, "%3d  %8.2f  %8.2f  %s\n", i, Cities[i].longitude, Cities[i].latitude, Cities[i].name.c_str() );
+	// }
 
         omp_set_num_threads( NUMT );    // set the number of threads to use in parallelizing the for-loop:`
 
@@ -104,6 +104,7 @@ main( int argc, char *argv[ ] )
 		time0 = omp_get_wtime( );
 
         	// the #pragma goes here -- you figure out what it needs to look like:
+        // #pragma omp parallel for collapse(2)
 		for( int i = 0; i < NUMCITIES; i++ )
 		{
 			int capitalnumber = -1;
@@ -114,9 +115,11 @@ main( int argc, char *argv[ ] )
 				float dist = Distance( i, k );
 				if( dist < mindistance )
 				{
-					?????
-					?????
-					?????
+                    capitalnumber++;
+                    Cities[i].capitalnumber = capitalnumber;
+                    Cities[i].mindistance = abs(dist);
+                    mindistance = abs(dist);
+
 				}
 			}
 
@@ -135,8 +138,8 @@ main( int argc, char *argv[ ] )
 		// get the average longitude and latitude for each capital:
 		for( int k = 0; k < NUMCAPITALS; k++ )
 		{
-			Capitals[k].longitude = ?????
-			Capitals[k].latitude  = ?????
+			Capitals[k].longitude = Capitals[k].longsum / Capitals[k].numsum;
+			Capitals[k].latitude  = Capitals[k].latsum / Capitals[k].numsum;
 		}
 	}
 
@@ -145,10 +148,10 @@ main( int argc, char *argv[ ] )
 
 	// figure out what actual city is closest to each capital:
 	// this is the extra credit:
-	for( int k = 0; k < NUMCAPITALS; k++ )
-	{
-		?????
-	}
+	// for( int k = 0; k < NUMCAPITALS; k++ )
+	// {
+	// 	?????
+	// }
 
 
 	// print the longitude-latitude of each new capital city:
