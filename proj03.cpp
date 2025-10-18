@@ -14,7 +14,7 @@
 
 // setting the number of capitals we want to try:
 #ifndef NUMCAPITALS
-#define NUMCAPITALS	5
+#define NUMCAPITALS	10
 #endif
 
 
@@ -24,7 +24,7 @@
 // how many tries to discover the maximum performance:
 #define NUMTRIES	30
 
-#define CSV
+#define CSV "proj03.csv"
 
 struct city
 {
@@ -104,8 +104,8 @@ main( int argc, char *argv[ ] )
 
 		time0 = omp_get_wtime( );
 
-        	// the #pragma goes here -- you figure out what it needs to look like:
-        #pragma omp barrier
+        // the #pragma goes here -- you figure out what it needs to look like:
+        #pragma omp parallel for
 		for( int i = 0; i < NUMCITIES; i++ )
 		{
 			// int capitalnumber = -1;
@@ -144,37 +144,26 @@ main( int argc, char *argv[ ] )
 		}
     }
 
-    // std::cout << "=== Cities Array ===\n";
-    // for (int i = 0; i < NUMCITIES; ++i) {
-    //     std::cout << i << ": "
-    //             << Cities[i].name
-    //             << " | Lon: " << Cities[i].longitude
-    //             << " | Lat: " << Cities[i].latitude
-    //             << " | Capital#: " << Cities[i].capitalnumber
-    //             << " | MinDist: " << Cities[i].mindistance
-    //             << '\n';
-    // }
-    // std::cout << "\n=== Capitals Array ===\n";
-    // for (int k = 0; k < NUMCAPITALS; ++k) {
-    //     std::cout << k << ": "
-    //             << Capitals[k].name
-    //             << " | Lon: " << Capitals[k].longitude
-    //             << " | Lat: " << Capitals[k].latitude
-    //             << " | Longsum: " << Capitals[k].longsum
-    //             << " | Latsum: " << Capitals[k].latsum
-    //             << " | numsum: " << Capitals[k].numsum
-    //             << '\n';
-    // }
-
 	double megaCityCapitalsPerSecond = (double)NUMCITIES * (double)NUMCAPITALS / ( time1 - time0 ) / 1000000.;
-
 
 	// figure out what actual city is closest to each capital:
 	// this is the extra credit:
-	// for( int k = 0; k < NUMCAPITALS; k++ )
-	// {
-	// 	?????
-	// }
+
+	for( int k = 0; k < NUMCAPITALS; k++ )
+	{
+		float min_distance = 1.e+37;
+		std::string new_capital;
+
+		for (int i = 0; i < NUMCITIES; i++) {
+			float dist = Distance(i, k);
+			if (dist < min_distance) {
+				new_capital = Cities[i].name;
+				min_distance = dist;
+			}
+		} 
+		Capitals[k].name = new_capital;
+	}
+
 
     // CHANGED THIS TO LATITUDE-LONGITUDE FOR EASE OF COPY & PASTE
 	// print the longitude-latitude of each new capital city:
@@ -183,10 +172,12 @@ main( int argc, char *argv[ ] )
 	{
 		for( int k = 0; k < NUMCAPITALS; k++ )
 		{
-			fprintf( stderr, "\t%3d:  %8.2f , %8.2f\n", k, Capitals[k].latitude, Capitals[k].longitude * -1);
+			// I multiply longitude by -1 for quicker copy and pasting 
+			// fprintf( stderr, "%8.2f , %8.2f\n",Capitals[k].latitude, Capitals[k].longitude * -1);
+			// \t%3d:   k, 
 
 			//if you did the extra credit, use this fprintf instead:
-			//fprintf( stderr, "\t%3d:  %8.2f , %8.2f , %s\n", k, Capitals[k].longitude, Capitals[k].latitude, Capitals[k].name.c_str() );
+			// fprintf( stderr, "\t%3d:  %8.2f , %8.2f , %s\n", k, Capitals[k].latitude, Capitals[k].longitude * -1, Capitals[k].name.c_str() );
 		}
 	}
 #ifdef CSV
