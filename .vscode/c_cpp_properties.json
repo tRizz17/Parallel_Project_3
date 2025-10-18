@@ -3,8 +3,10 @@
         {
             "name": "Mac",
             "includePath": [
-                "${workspaceFolder}/**",
-                "/opt/homebrew/opt/libomp/include"
+                "${workspaceFolder}/**"
+                // for Mac
+                // ,
+                // "/opt/homebrew/opt/libomp/include"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/clang",
