@@ -5,6 +5,7 @@
 #include <time.h>
 #include <omp.h>
 #include <string>
+#include <iostream>
 
 // setting the number of threads:
 #ifndef NUMT
@@ -104,10 +105,10 @@ main( int argc, char *argv[ ] )
 		time0 = omp_get_wtime( );
 
         	// the #pragma goes here -- you figure out what it needs to look like:
-        // #pragma omp parallel for collapse(2)
+        #pragma omp barrier
 		for( int i = 0; i < NUMCITIES; i++ )
 		{
-			int capitalnumber = -1;
+			// int capitalnumber = -1;
 			float mindistance = 1.e+37;
 
 			for( int k = 0; k < NUMCAPITALS; k++ )
@@ -115,10 +116,9 @@ main( int argc, char *argv[ ] )
 				float dist = Distance( i, k );
 				if( dist < mindistance )
 				{
-                    capitalnumber++;
-                    Cities[i].capitalnumber = capitalnumber;
-                    Cities[i].mindistance = abs(dist);
-                    mindistance = abs(dist);
+                    Cities[i].capitalnumber = k;
+                    Cities[i].mindistance = dist;
+                    mindistance = dist;
 
 				}
 			}
@@ -131,17 +131,40 @@ main( int argc, char *argv[ ] )
 				Capitals[k].latsum  += Cities[i].latitude;
 				Capitals[k].numsum++;
 			}
-		}
-		time1 = omp_get_wtime( );
+
+        }
+        time1 = omp_get_wtime( );
 
 
 		// get the average longitude and latitude for each capital:
-		for( int k = 0; k < NUMCAPITALS; k++ )
+		for( int k = 0; k < NUMCAPITALS; k++ ) 
 		{
 			Capitals[k].longitude = Capitals[k].longsum / Capitals[k].numsum;
 			Capitals[k].latitude  = Capitals[k].latsum / Capitals[k].numsum;
 		}
-	}
+    }
+
+    // std::cout << "=== Cities Array ===\n";
+    // for (int i = 0; i < NUMCITIES; ++i) {
+    //     std::cout << i << ": "
+    //             << Cities[i].name
+    //             << " | Lon: " << Cities[i].longitude
+    //             << " | Lat: " << Cities[i].latitude
+    //             << " | Capital#: " << Cities[i].capitalnumber
+    //             << " | MinDist: " << Cities[i].mindistance
+    //             << '\n';
+    // }
+    // std::cout << "\n=== Capitals Array ===\n";
+    // for (int k = 0; k < NUMCAPITALS; ++k) {
+    //     std::cout << k << ": "
+    //             << Capitals[k].name
+    //             << " | Lon: " << Capitals[k].longitude
+    //             << " | Lat: " << Capitals[k].latitude
+    //             << " | Longsum: " << Capitals[k].longsum
+    //             << " | Latsum: " << Capitals[k].latsum
+    //             << " | numsum: " << Capitals[k].numsum
+    //             << '\n';
+    // }
 
 	double megaCityCapitalsPerSecond = (double)NUMCITIES * (double)NUMCAPITALS / ( time1 - time0 ) / 1000000.;
 
@@ -153,14 +176,14 @@ main( int argc, char *argv[ ] )
 	// 	?????
 	// }
 
-
+    // CHANGED THIS TO LATITUDE-LONGITUDE FOR EASE OF COPY & PASTE
 	// print the longitude-latitude of each new capital city:
 	// you only need to do this once per some number of NUMCAPITALS -- do it for the 1-thread version:
 	if( NUMT == 1 )
 	{
 		for( int k = 0; k < NUMCAPITALS; k++ )
 		{
-			fprintf( stderr, "\t%3d:  %8.2f , %8.2f\n", k, Capitals[k].longitude, Capitals[k].latitude );
+			fprintf( stderr, "\t%3d:  %8.2f , %8.2f\n", k, Capitals[k].latitude, Capitals[k].longitude * -1);
 
 			//if you did the extra credit, use this fprintf instead:
 			//fprintf( stderr, "\t%3d:  %8.2f , %8.2f , %s\n", k, Capitals[k].longitude, Capitals[k].latitude, Capitals[k].name.c_str() );
