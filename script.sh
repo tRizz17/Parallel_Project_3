@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# FOR MAC
+# FOR MAC (this doesn't work)
 # for t in 1 2 4 6 8
 # do
 #   for n in 2 3 4 5 10 15 20 30 40 50
@@ -18,6 +18,6 @@ do
   for n in 2 3 4 5 10 15 20 30 40 50
   do
      g++   proj03.cpp  -DNUMT=$t -DNUMCAPITALS=$n  -o proj03  -lm  -fopenmp
-    ./proj03 > "proj03.csv \n"
+    ./proj03 2>> proj03.csv
   done
 done
